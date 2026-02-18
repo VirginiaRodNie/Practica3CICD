@@ -1,0 +1,41 @@
+# Nombre del workflow que aparecerá en GitHub Actions
+name: Deploy to Netlify
+
+# Se ejecuta cuando hay un push a la rama main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    # Usa la última versión de Ubuntu
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Descarga el código del repositorio
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      # 2. Instala Node.js versión 18
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      # 3. Instala las dependencias del proyecto
+      - name: Install dependencies
+        run: npm install
+      
+      # 4. Construye el proyecto (copia el HTML a la carpeta dist)
+      - name: Build project
+        run: npm run build
+      
+      # 5. Despliega a Netlify en producción
+      - name: Deploy to Netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --prod --dir=dist
+        env:
+          NETLIFY_SITE_ID: 66b38c32-4367-4c12-a6fc-5573ef7fd3ec
+          NETLIFY_AUTH_TOKEN: nfp_PUQF2EdQbsEH9E82AgPnj2LZMxFbneoEb759
